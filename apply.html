@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<style>
+	*{margin:0;padding: 0;}
+	.main{width: 500px;height: 400px;position: relative;margin:0 auto;border:1px solid red;}
+	#div1{cursor: pointer;position: absolute;left: 0;top: 0;}
+</style>
+<body>
+	<div class="main">
+		<div id="div1"></div>
+	</div>
+		
+</body>
+<script>
+	function drag(id,width,height,bgcolor,parentWidth,parentHeight){
+		this.elem = document.getElementById(id);
+		this.width = width;
+		this.height = height;
+		this.bgcolor = bgcolor;
+
+		this.startX = 0;
+		this.startY = 0;
+		this.w = 0;
+		this.h = 0;
+		this.endX = 0;
+		this.endY = 0;
+		this.currentX ;
+		this.currentY ;
+
+		if(parentWidth){
+			this.parentWidth = parentWidth;
+		}
+		if(parentHeight){
+			this.parentHeight = parentHeight;
+		}
+		this.init();
+	};
+	drag.prototype = {
+		init : function(){
+			this.elem.style.width = this.width;
+			this.elem.style.height = this.height;
+			this.elem.style.backgroundColor = this.bgcolor;
+			this.mousedown();
+		},
+		mousedown : function(){
+			var _this = this;
+			this.elem.onmousedown = function(ev){
+				var ev = ev || window.event ;
+				_this.startX = ev.clientX ;
+				_this.startY = ev.clientY ;
+				_this.w = _this.elem.offsetLeft;
+				_this.h = _this.elem.offsetTop;
+				_this.mousemove();
+			}
+		},
+		mousemove : function(){
+			var _this = this;
+			document.onmousemove = function(ev){
+				var ev = ev || window.event ;
+				_this.endX = ev.clientX ;
+				_this.endY = ev.clientY ;
+				_this.currentX = _this.endX - _this.startX + _this.w ;
+				_this.currentY = _this.endY - _this.startY + _this.h ;
+				
+				if(_this.parentWidth){
+					if(_this.currentX < 0){
+
+						_this.currentX = 0 ;
+
+					}
+					if(_this.currentX > parseInt(_this.parentWidth) - parseInt(_this.width)){
+
+						_this.currentX = parseInt(_this.parentWidth) - parseInt(_this.width) ;
+
+					}
+				}
+				if(_this.parentHeight){
+					if(_this.currentY < 0){
+
+						_this.currentY = 0 ;
+
+					}
+					if(_this.currentY > parseInt(_this.parentHeight) - parseInt(_this.height)){
+
+						_this.currentY = parseInt(_this.parentHeight) - parseInt(_this.height) ;
+
+					}
+				}
+				
+				_this.elem.style.left = _this.currentX + 'px' ;
+				_this.elem.style.top = _this.currentY + 'px' ;
+				_this.mouseup();
+			}
+		},
+		mouseup : function(){
+			var _this = this ;
+			document.onmouseup = function(ev){
+				_this.elem.onmouseup = null ;
+				document.onmousemove = null ;
+			}
+		}
+	}
+	new drag('div1','100px','100px','red','500px','400px');
+</script>
+
+</html>
